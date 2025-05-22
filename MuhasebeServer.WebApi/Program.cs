@@ -1,5 +1,6 @@
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc.ApplicationParts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
@@ -11,10 +12,11 @@ using MuhasebeServer.Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
 
 builder.Services.AddIdentity<AppUser, AppRole>()
-.AddEntityFrameworkStores<AppDbContext>();
+    .AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services.AddMediatR(typeof(MuhasebeServer.Application.AssemblyReference).Assembly);
 
@@ -22,12 +24,16 @@ builder.Services.AddAutoMapper(typeof(MuhasebeServer.Persistance.AssemblyReferen
 
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 
-// Add services to the container.
-
+// Burada varsayýlan assembly'yi temizliyoruz, sadece belirttiðimiz assembly'deki controller'larý yüklüyoruz
 builder.Services.AddControllers()
-    .AddApplicationPart(typeof(AssemblyReference).Assembly);
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+    .ConfigureApplicationPartManager(apm =>
+    {
+        apm.ApplicationParts.Clear();
+        apm.ApplicationParts.Add(new AssemblyPart(typeof(AssemblyReference).Assembly));
+    });
+
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen(setup =>
 {
     var jwtSecurityScheme = new OpenApiSecurityScheme
@@ -51,11 +57,12 @@ builder.Services.AddSwaggerGen(setup =>
         { jwtSecurityScheme, Array.Empty<string>() }
     });
 
+    // Çakýþma çözümü (Opsiyonel, Swagger çatýþma hatalarýný engeller)
+    setup.ResolveConflictingActions(apiDescriptions => apiDescriptions.First());
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();

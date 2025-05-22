@@ -9,7 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace MuhasebeServer.Presentation.Controller
+namespace MuhasebeServer.Presentation.Controllers
 {
     public sealed class CompaniesController : ApiController
     {
