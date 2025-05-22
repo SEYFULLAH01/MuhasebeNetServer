@@ -13,7 +13,7 @@ namespace MuhasebeServer.Persistance.Context
     {
         private string ConnectionString = "";
 
-        public CompanyDbContext(string companyıd, Company company = null)
+        public CompanyDbContext(Company company = null)
         {
             if (company != null)
             {
@@ -55,7 +55,7 @@ namespace MuhasebeServer.Persistance.Context
 
             public CompanyDbContext CreateDbContext(string[] args)
             {
-                return new CompanyDbContext("");
+                return new CompanyDbContext();
             }
         }
     }

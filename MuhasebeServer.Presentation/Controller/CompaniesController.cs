@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using MuhasebeServer.Application.Features.AppFeatures.CompanyFeatures.Commands.CreateCompany;
+using MuhasebeServer.Application.Features.AppFeatures.CompanyFeatures.Commands.MigrateCompanyDatabases;
 using MuhasebeServer.Presentation.Abstraction;
 using System;
 using System.Collections.Generic;
@@ -10,10 +13,21 @@ namespace MuhasebeServer.Presentation.Controller
 {
     public sealed class CompaniesController : ApiController
     {
-        [HttpGet]
-        public IActionResult GetAll()
+        public CompaniesController(IMediator mediator) : base(mediator)
         {
-            return Ok("Companies");
+        }
+        [HttpPost("[action]")]
+        public async Task<IActionResult> CreateCompany(CreateCompanyCommandRequest request, CancellationToken cancellationToken)
+        {
+            CreateCompanyCommandResponse response = await _mediator.Send(request, cancellationToken);
+            return Ok(response);
+        }
+        [HttpGet("[action]")]
+        public async Task<IActionResult> MigrateCompanyDatabases()
+        {
+            MigrateCompanyDatabasesRequest request = new();
+            MigrateCompanyDatabasesCommandResponse response = await _mediator.Send(request);
+            return Ok(response);
         }
     }
 }

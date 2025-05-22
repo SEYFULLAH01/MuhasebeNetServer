@@ -6,4 +6,18 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Features\AppFeatures\CompanyFeatures\Queries\" />
+    <Folder Include="Features\CompanyFeatures\" />
+    <Folder Include="Services\CompanyServices\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="11.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MuhasebeServer.Domain\MuhasebeServer.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

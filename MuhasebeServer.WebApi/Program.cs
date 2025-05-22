@@ -1,12 +1,26 @@
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
+using MuhasebeServer.Application.Services.AppServices;
+using MuhasebeServer.Domain.AppEntities.Identity;
 using MuhasebeServer.Persistance.Context;
+using MuhasebeServer.Persistance.Services.AppServices;
 using MuhasebeServer.Presentation;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<AppDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")));
+
+builder.Services.AddIdentity<AppUser, AppRole>()
+.AddEntityFrameworkStores<AppDbContext>();
+
+builder.Services.AddMediatR(typeof(MuhasebeServer.Application.AssemblyReference).Assembly);
+
+builder.Services.AddAutoMapper(typeof(MuhasebeServer.Persistance.AssemblyReference).Assembly);
+
+builder.Services.AddScoped<ICompanyService, CompanyService>();
 
 // Add services to the container.
 
